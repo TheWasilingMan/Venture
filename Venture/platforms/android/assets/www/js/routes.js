@@ -11,7 +11,7 @@ angular.module('app.routes', ['ionicUIRouter'])
   
 
       .state('tabsController.adventures', {
-    url: '/page2',
+    url: '/adventures',
     views: {
       'tab4': {
         templateUrl: 'templates/adventures.html',
@@ -24,25 +24,25 @@ angular.module('app.routes', ['ionicUIRouter'])
     The IonicUIRouter.js UI-Router Modification is being used for this route.
     To navigate to this route, do NOT use a URL. Instead use one of the following:
       1) Using the ui-sref HTML attribute:
-        ui-sref='tabsController.navigate'
+        ui-sref='tabsController.venture'
       2) Using $state.go programatically:
-        $state.go('tabsController.navigate');
+        $state.go('tabsController.venture');
     This allows your app to figure out which Tab to open this page in on the fly.
     If you're setting a Tabs default page or modifying the .otherwise for your app and
     must use a URL, use one of the following:
-      /page1/tab4/page3
-      /page1/tab3/page3
+      /page1/tab4/venture
+      /page1/tab3/venture
   */
-  .state('tabsController.navigate', {
-    url: '/page3',
+  .state('tabsController.venture', {
+    url: '/venture',
     views: {
       'tab4': {
-        templateUrl: 'templates/navigate.html',
-        controller: 'navigateCtrl'
+        templateUrl: 'templates/venture.html',
+        controller: 'ventureCtrl'
       },
       'tab3': {
-        templateUrl: 'templates/navigate.html',
-        controller: 'navigateCtrl'
+        templateUrl: 'templates/venture.html',
+        controller: 'ventureCtrl'
       }
     }
   })
@@ -53,7 +53,25 @@ angular.module('app.routes', ['ionicUIRouter'])
     abstract:true
   })
 
-$urlRouterProvider.otherwise('/page1/page2')
+  .state('login', {
+    url: '/login',
+    templateUrl: 'templates/login.html',
+    controller: 'loginCtrl'
+  })
+
+  .state('signup', {
+    url: '/signup',
+    templateUrl: 'templates/signup.html',
+    controller: 'signupCtrl'
+  })
+
+  .state('settings', {
+    url: '/settings',
+    templateUrl: 'templates/settings.html',
+    controller: 'settingsCtrl'
+  })
+
+$urlRouterProvider.otherwise('/login')
 
   
 
