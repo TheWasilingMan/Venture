@@ -1,0 +1,36 @@
+<head>
+    <script src="jquery-3.1.1.js"></script>
+    <script src="RemoteDatabaseFunctions.js"></script>
+</head>
+<ion-view title="Adventures" hide-nav-bar="true" id="adventures-page">
+    <ion-content padding="true" class="manual-ios-statusbar-padding">
+        <ion-list id="search">
+            <label class="item item-input" id="adventures-search" name="Search">
+                <i class="icon ion-search placeholder-icon"></i>
+                <input type="search" placeholder="Search">
+            </label>
+        </ion-list>
+        <ion-list id="adventures-list">
+            <script>
+                //getAdventures(listAdventures);
+                function listAdventures(adventuresList) {
+                    $.each(adventuresList, function (adventuresListIndex, adventure) {
+                        var tempLength = adventure["length"];
+                        var length;
+                        if (tempLength.substring(0, 2) != "00")
+                            length = tempLength.substring(0, 2) + " Hr ";
+                        if (tempLength.substring(3, 5) != "00")
+                            length = tempLength.substring(3, 5) + " Min";
+
+                        var adventureItemHtml = "<ion-item class='item-icon-right balanced' id='adventures-list-item" + adventuresListIndex
+                                                + "' ui-sref='tabsController.venture'>" + adventure["advName"]
+                                                + "<i class='icon ion-ios-navigate'></i><div id='adventure" + adventuresListIndex
+                                                + "'-details' class='how-list-numbers-and-dots'><p style='margin-top:0px;color:#000000;'><strong>"
+                                                + length + "<br>Resources:</strong> " + adventure["resources"] + "</p></div></ion-item>";
+                        $("#adventures-list").append(adventureItemHtml);
+                    });
+                }
+            </script>
+        </ion-list>
+    </ion-content>
+</ion-view>

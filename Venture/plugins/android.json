@@ -24,6 +24,16 @@
         },
         "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "io.cordova.myapp59760f"
+        },
+        "cordova-plugin-winstore-jscompat": {
+            "PACKAGE_NAME": "io.cordova.myapp59760f"
+        },
+        "cordova-plugin-ionic-keyboard": {
+            "PACKAGE_NAME": "io.cordova.myapp59760f"
+        },
+        "cordova-plugin-googlemaps": {
+            "API_KEY_FOR_ANDROID": "AIzaSyDGwlfTw2vzz87eUjmaPAFOMQHBZZwpKik",
+            "PACKAGE_NAME": "io.cordova.myapp59760f"
         }
     },
     "dependent_plugins": {}
