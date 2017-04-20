@@ -15,18 +15,6 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives
 
 })
 
-.config(function ($stateProvider, $urlRouterProvider) {
-
-    //$stateProvider
-    //.state('map', {
-    //    url: '/',
-    //    templateUrl: 'templates/venture.html',
-    //    controller: 'MapCtrl'
-    //});
-
-    //$urlRouterProvider.otherwise("/");
-
-})
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard

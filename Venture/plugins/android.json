@@ -7,13 +7,20 @@
         "files": {}
     },
     "installed_plugins": {
-        "cordova-plugin-device": {
-            "PACKAGE_NAME": "io.cordova.myapp59760f"
-        },
         "cordova-plugin-console": {
             "PACKAGE_NAME": "io.cordova.myapp59760f"
         },
-        "cordova-plugin-whitelist": {
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "io.cordova.myapp59760f"
+        },
+        "cordova-plugin-device-orientation": {
+            "PACKAGE_NAME": "io.cordova.myapp59760f"
+        },
+        "cordova-plugin-googlemaps": {
+            "API_KEY_FOR_ANDROID": "AIzaSyDGwlfTw2vzz87eUjmaPAFOMQHBZZwpKik",
+            "PACKAGE_NAME": "io.cordova.myapp59760f"
+        },
+        "cordova-plugin-ionic-keyboard": {
             "PACKAGE_NAME": "io.cordova.myapp59760f"
         },
         "cordova-plugin-splashscreen": {
@@ -22,17 +29,13 @@
         "cordova-plugin-statusbar": {
             "PACKAGE_NAME": "io.cordova.myapp59760f"
         },
-        "ionic-plugin-keyboard": {
+        "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "io.cordova.myapp59760f"
         },
         "cordova-plugin-winstore-jscompat": {
             "PACKAGE_NAME": "io.cordova.myapp59760f"
         },
-        "cordova-plugin-ionic-keyboard": {
-            "PACKAGE_NAME": "io.cordova.myapp59760f"
-        },
-        "cordova-plugin-googlemaps": {
-            "API_KEY_FOR_ANDROID": "AIzaSyDGwlfTw2vzz87eUjmaPAFOMQHBZZwpKik",
+        "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "io.cordova.myapp59760f"
         }
     },

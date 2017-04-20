@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://maps.googleapis.com/ https://maps.gstatic.com/ https://mts0.googleapis.com/ 'unsafe-inline' 'unsafe-eval'">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.klokantech.com https://maps.googleapis.com https://maps.gstatic.com http://localhost:*; object-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:" />
     <title></title>
 
     
@@ -15,7 +15,8 @@
     <script src="lib\jquery\jquery-3.1.1.js"></script>
     <script src="js\RemoteDatabaseFunctions.js"></script>
     <script src="js\ng-cordova.js"></script>
-    <script src="http://maps.google.com/maps/api/js?key=AIzaSyDGwlfTw2vzz87eUjmaPAFOMQHBZZwpKik&sensor=true"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGwlfTw2vzz87eUjmaPAFOMQHBZZwpKik&sensor=true"></script>
+
 
     <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
     <link href="css/ionic.app.css" rel="stylesheet">

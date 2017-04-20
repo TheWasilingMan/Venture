@@ -29,3 +29,18 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     width: 100%;
     height: 100%;
 }
+
+#myarrow {
+   width: 70px;
+   height: 70px;
+}
+
+::-webkit-scrollbar { 
+    display: none;
+}
+
+.vert-center-arrow {
+    margin-left: -5px;  // Move arrow to center of blue dot (it seems that the blue dot is 12px wide)
+    position: absolute;
+    top: calc((100% - 49px) / 2 - 49px + 11px); // (screen height - navbar height) / 2 + navbar height + 11px which appears to be half of the blue dots height
+}
