@@ -1,27 +1,58 @@
 var steps;
-var stepId;
-var stepLat;
-var stepLng;
+var stepLatLng;
 var stepInstruc;
 var nextStepId;
-var scope;
+var advName;
+var firstAdvLoaded = false;
 
 function getAdventure(element) {
+    $(".adventure-item").each(function () {
+        this.style.backgroundColor = "#FFFFFF";
+    });
+    element.style.backgroundColor = "rgba(67, 206, 230, .3)";
     getSteps(loadAdventure, $(element).data("firststepid"));
+    advName = $(element).data("advname");
+    $(element).focus();
+    
 }
 
 function loadAdventure(stepsList) {
     stepsList = $(stepsList);
     steps = stepsList;
-    stepId = stepsList[0]["stepId"];
-    stepLat = stepsList[0]["stepLat"];
-    stepLng = stepsList[0]["stepLng"];
-    stepInstruc = stepsList[0]["stepInstruc"];
-    nextStepId = stepsList[0]["nextStepId"];
+    stepLatLng = new google.maps.LatLng(steps[0]["stepLat"], steps[0]["stepLng"]);
+    stepInstruc = steps[0]["stepInstruc"];
+    nextStepId = steps[0]["nextStepId"];
+
+    if (firstAdvLoaded) {
+        var instrucDiv = document.getElementById('instrucText');
+        instrucDiv.innerHTML = stepInstruc;
+    }
+    firstAdvLoaded = true;
+
     //window.location = "templates/adventures.html";
     //$location.path('adventures')
     //this.navCtrl.push('adventures.html');
     //scope.go('Venture');
+}
+
+function nextStep() {
+    if (nextStepId) {
+        var nextStep;
+        steps.each(function (index, step) {
+            if (step["stepId"] == nextStepId) {
+                nextStep = step;
+            }
+        });
+        stepLatLng = new google.maps.LatLng(nextStep["stepLat"], nextStep["stepLng"]);
+        stepInstruc = nextStep["stepInstruc"];
+        nextStepId = nextStep["nextStepId"];
+        var instrucDiv = document.getElementById('instrucText');
+        instrucDiv.innerHTML = stepInstruc;
+    }
+    else {
+        var instrucDiv = document.getElementById('instrucText');
+        instrucDiv.innerHTML = advName + " Completed!";
+    }
 }
 
 angular.module('app.controllers', [])
@@ -45,11 +76,11 @@ angular.module('app.controllers', [])
                 if (tempLength.substring(3, 5) != "00")
                     length = tempLength.substring(3, 5) + " Min";
 
-                var adventureItemHtml = "<ion-item onclick='getAdventure(this)' class='item balanced' id='adventures-list-item" + adventuresListIndex
+                var adventureItemHtml = "<ion-item onclick='getAdventure(this)' class='item balanced adventure-item' id='adventures-list-item" + adventuresListIndex
                                         + "' data-advId='" + adventure["advId"] + "' data-firststepid='" + adventure["firstStepId"] + "' data-startlat='"
-                                        + adventure["startLat"] + "' data-startlng='" + adventure["startLng"] + "'>" + adventure["advName"]
+                                        + adventure["startLat"] + "' data-startlng='" + adventure["startLng"] + "' data-advname='" + adventure["advName"] + "'>"
                                         //+ "<div><i class='icon ion-ios-navigate'></i></div>"
-                                        + "<div id='adventure" + adventuresListIndex
+                                        + adventure["advName"] + "<div id='adventure" + adventuresListIndex
                                         + "'-details' class='how-list-numbers-and-dots'><p style='margin-top:0px;color:#000000;'><strong>"
                                         + length + "<br>Resources:</strong> " + adventure["resources"] + "</p></div></ion-item>";
                 $("#adventures-list").append(adventureItemHtml);
@@ -86,6 +117,11 @@ angular.module('app.controllers', [])
                     map.panTo(pos);
                 }
                 myMarker.setPosition(pos);
+                var metersAwayForNextStep = 20;
+                var metersAway = google.maps.geometry.spherical.computeDistanceBetween(posLatLng, stepLatLng);
+                if (metersAway <= metersAwayForNextStep) {
+                    nextStep();
+                }
             }
         }
     );
@@ -141,6 +177,8 @@ angular.module('app.controllers', [])
         map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(controlDiv);
     }
 
+    var oldHeading = 0;
+
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
             zoom: 19,
@@ -168,6 +206,10 @@ angular.module('app.controllers', [])
         var instrucDiv = document.getElementById('instrucText');
         instrucDiv.innerHTML = stepInstruc;
         map.controls[google.maps.ControlPosition.TOP_CENTER].push(instrucDiv);
+        var oriOptions = {
+            frequency: 20   // update every 20ms. There is a "filter" option, but it's not supported on android
+        };
+        var oriWatch = navigator.compass.watchHeading(oriSuccess, oriFailure, oriOptions);
     }
 
 // ARROW FUNCTIONS
@@ -189,7 +231,6 @@ angular.module('app.controllers', [])
         heading = -heading % 360;
         
         if (pos) {
-            var stepLatLng = new google.maps.LatLng(stepLat, stepLng);
             var stepBearing = google.maps.geometry.spherical.computeHeading(posLatLng, stepLatLng);
             stepBearing += 180;
             heading += stepBearing + 180;
@@ -200,12 +241,6 @@ angular.module('app.controllers', [])
             document.getElementById('myarrow').style[cssTransform] = 'rotate(' + heading + 'deg)';
         }
     }
-
-    var oriOptions = {
-        frequency: 20   // update every 20ms. There is a "filter" option, but it's not supported on android
-    };
-    var oldHeading = 0;
-    var oriWatch = navigator.compass.watchHeading(oriSuccess, oriFailure, oriOptions);
 
     function oriFailure (error) {
         console.log(error.message)
