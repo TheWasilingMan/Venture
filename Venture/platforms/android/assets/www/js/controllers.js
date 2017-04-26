@@ -1,12 +1,41 @@
+var steps;
+var stepId;
+var stepLat;
+var stepLng;
+var stepInstruc;
+var nextStepId;
+var scope;
+
+function getAdventure(element) {
+    getSteps(loadAdventure, $(element).data("firststepid"));
+}
+
+function loadAdventure(stepsList) {
+    stepsList = $(stepsList);
+    steps = stepsList;
+    stepId = stepsList[0]["stepId"];
+    stepLat = stepsList[0]["stepLat"];
+    stepLng = stepsList[0]["stepLng"];
+    stepInstruc = stepsList[0]["stepInstruc"];
+    nextStepId = stepsList[0]["nextStepId"];
+    //window.location = "templates/adventures.html";
+    //$location.path('adventures')
+    //this.navCtrl.push('adventures.html');
+    //scope.go('Venture');
+}
+
 angular.module('app.controllers', [])
   
-.controller('adventuresCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('adventuresCtrl', ['$scope', '$stateParams', function ($scope, $stateParams) { // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams) {
+    
+
     $scope.$on("$ionicView.beforeEnter", function (event, data) {
+
         getAdventures(listAdventures);
         $("#adventures-list").empty();
+
         function listAdventures(adventuresList) {
             $.each(adventuresList, function (adventuresListIndex, adventure) {
                 var tempLength = adventure["length"];
@@ -16,22 +45,25 @@ function ($scope, $stateParams) {
                 if (tempLength.substring(3, 5) != "00")
                     length = tempLength.substring(3, 5) + " Min";
 
-                var adventureItemHtml = "<ion-item class='item-icon-right balanced' id='adventures-list-item" + adventuresListIndex
-                                        + "' ui-sref='tabsController.venture'>" + adventure["advName"]
-                                        + "<i class='icon ion-ios-navigate'></i><div id='adventure" + adventuresListIndex
+                var adventureItemHtml = "<ion-item onclick='getAdventure(this)' class='item balanced' id='adventures-list-item" + adventuresListIndex
+                                        + "' data-advId='" + adventure["advId"] + "' data-firststepid='" + adventure["firstStepId"] + "' data-startlat='"
+                                        + adventure["startLat"] + "' data-startlng='" + adventure["startLng"] + "'>" + adventure["advName"]
+                                        //+ "<div><i class='icon ion-ios-navigate'></i></div>"
+                                        + "<div id='adventure" + adventuresListIndex
                                         + "'-details' class='how-list-numbers-and-dots'><p style='margin-top:0px;color:#000000;'><strong>"
                                         + length + "<br>Resources:</strong> " + adventure["resources"] + "</p></div></ion-item>";
                 $("#adventures-list").append(adventureItemHtml);
             });
         }
     });
-
 }])
 
 .controller('ventureCtrl', function ($scope, $state, $cordovaGeolocation) {
-// MAKE MAP
+    // MAKE MAP
     var locOptions = { timeout: 10000, enableHighAccuracy: true };
     var pos;
+    var posLatLng
+    var map;
     var myMarker;
     var centering = true;
     var mapDrawn = false;
@@ -44,6 +76,7 @@ function ($scope, $stateParams) {
             var lat = position.coords.latitude;
             var lng = position.coords.longitude;
             pos = { lat, lng };
+            posLatLng = new google.maps.LatLng(lat, lng);
             if (!mapDrawn) {
                 initMap();
                 mapDrawn = true;
@@ -99,6 +132,7 @@ function ($scope, $stateParams) {
             }, 500);
             marker.setPosition(pos);
             map.setCenter(pos);
+            centering = true;
             clearInterval(animationInterval);
             $('#you_location_img').css('background-position', '-144px 0px');
         });
@@ -109,11 +143,19 @@ function ($scope, $stateParams) {
 
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 20,
+            zoom: 19,
             center: pos,
-            mapTypeId: google.maps.MapTypeId.SATELLITE,
+            mapTypeId: "satellite",
             disableDefaultUI: true,
-            draggable: true
+            zoomControl: true,
+            //rotateControl: true,
+            draggable: true,
+            gestureHandling: "auto"
+        });
+        //map.setTilt(45)
+        map.addListener('dragstart', function () {
+            centering = false;
+            return true;
         });
         image = "img/blue-dot.png";
         myMarker = new google.maps.Marker({
@@ -123,6 +165,9 @@ function ($scope, $stateParams) {
             position: pos
         });
         addYourLocationButton(map, myMarker);
+        var instrucDiv = document.getElementById('instrucText');
+        instrucDiv.innerHTML = stepInstruc;
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(instrucDiv);
     }
 
 // ARROW FUNCTIONS
@@ -137,36 +182,47 @@ function ($scope, $stateParams) {
     }
 
     var cssTransform;
-    function setArrowRotation(x) {
+    function setArrowRotation(heading) {
         if (cssTransform === undefined) {
             cssTransform = getsupportedprop(['transform', 'webkitTransform', 'MozTransform', 'OTransform', 'msTransform']);
         }
-        x = (x) % 360;
+        heading = -heading % 360;
+        
+        if (pos) {
+            var stepLatLng = new google.maps.LatLng(stepLat, stepLng);
+            var stepBearing = google.maps.geometry.spherical.computeHeading(posLatLng, stepLatLng);
+            stepBearing += 180;
+            heading += stepBearing + 180;
+            //heading = stepBearing - (stepBearing + heading);
+            //heading = Math.round(-heading / 360 + 180);
+        }
         if (cssTransform) {
-            document.getElementById('myarrow').style[cssTransform] = 'rotate(' + x + 'deg)';
+            document.getElementById('myarrow').style[cssTransform] = 'rotate(' + heading + 'deg)';
         }
     }
 
     var oriOptions = {
         frequency: 20   // update every 20ms. There is a "filter" option, but it's not supported on android
     };
+    var oldHeading = 0;
     var oriWatch = navigator.compass.watchHeading(oriSuccess, oriFailure, oriOptions);
 
     function oriFailure (error) {
         console.log(error.message)
     }
+    
       
     function oriSuccess(result) {   // updates constantlyy
         var magneticHeading = result.magneticHeading;
         //var trueHeading = result.trueHeading;
         //var accuracy = result.headingAccuracy;
         //var timeStamp = result.timestamp;
-        setArrowRotation(magneticHeading);
+        if (Math.abs(magneticHeading - oldHeading) >= 3) {
+            setArrowRotation(magneticHeading);
+            oldHeading = magneticHeading;
+        }
     }
     //navigator.compass.clearWatch(oriWatch);
-
-    google.maps.event.addListener(map, 'drag', function() { centering = false; } );
-    
 })
       
 .controller('loginCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller

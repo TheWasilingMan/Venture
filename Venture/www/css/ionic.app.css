@@ -9826,9 +9826,9 @@ a.button {
   width: 70px;
   height: 70px; }
 
-::-webkit-scrollbar {
-  display: none; }
-
+/*::-webkit-scrollbar { // was needed at one point to remove scroll bar on ripple (along with scroll:false on html elements)
+    display: none;
+}*/
 .vert-center-arrow {
   margin-left: -5px;
   position: absolute;
